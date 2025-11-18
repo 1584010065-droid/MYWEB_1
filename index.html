@@ -65,7 +65,6 @@
             type="text"
             placeholder="支持中文，回车默认搜索知乎"
             class="w-full rounded-2xl bg-slate-800/80 border border-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40 px-5 py-4 text-base placeholder-slate-500 transition"
-            autofocus
           />
           <button
             id="clearInput"
@@ -99,54 +98,67 @@
 
     <script>
       const DEFAULT_PLATFORM = "zhihu";
+      const isMobileDevice = /Android|iPhone|iPad|iPod|Mobile/i.test(
+        navigator.userAgent
+      );
       const platforms = [
         {
           id: "zhihu",
           label: "知乎",
-          url: (q) => `https://www.zhihu.com/search?type=content&q=${q}`,
+          url: (encoded) => `https://www.zhihu.com/search?type=content&q=${encoded}`,
           className: "bg-blue-600 hover:bg-blue-500",
         },
         {
           id: "xiaohongshu",
           label: "小红书",
-          url: (q) => `https://www.xiaohongshu.com/search_result?keyword=${q}`,
+          url: (encoded) =>
+            `https://www.xiaohongshu.com/search_result?keyword=${encoded}&source=web_search`,
+          mobileUrl: (encoded) =>
+            `https://www.xiaohongshu.com/search_result?keyword=${encoded}&source=webapp`,
+          deepLink: (encoded, raw) =>
+            `xhsdiscover://search/result?keyword=${encodeURIComponent(raw)}`,
           className: "bg-red-500 hover:bg-red-400",
         },
         {
           id: "weibo",
           label: "微博",
-          url: (q) => `https://s.weibo.com/weibo?q=${q}`,
+          url: (encoded) => `https://s.weibo.com/weibo?q=${encoded}`,
           className: "bg-yellow-500 text-slate-900 hover:bg-yellow-400",
         },
         {
           id: "bilibili",
           label: "哔哩哔哩",
-          url: (q) => `https://search.bilibili.com/all?keyword=${q}`,
+          url: (encoded) => `https://search.bilibili.com/all?keyword=${encoded}`,
           className: "bg-pink-600 hover:bg-pink-500",
         },
         {
           id: "taobao",
           label: "淘宝",
-          url: (q) => `https://s.taobao.com/search?q=${q}`,
+          url: (encoded) => `https://s.taobao.com/search?q=${encoded}`,
           className: "bg-orange-500 hover:bg-orange-400",
         },
         {
           id: "pinduoduo",
           label: "拼多多",
-          url: (q) =>
-            `https://mobile.yangkeduo.com/search_result.html?search_key=${q}`,
+          url: (encoded) =>
+            `https://mobile.yangkeduo.com/search_result.html?search_key=${encoded}`,
           className: "bg-rose-500 hover:bg-rose-400",
         },
         {
           id: "xianyu",
           label: "闲鱼",
-          url: (q) => `https://s.m.taobao.com/search.htm?q=${q}&tab=idleFish`,
+          url: (encoded) =>
+            `https://s.2.taobao.com/list/waterfall/waterfall.htm?search_key=${encoded}`,
+          mobileUrl: (encoded) =>
+            `https://h5.m.goofish.com/app/xianyu/new_item_list.html?searchKey=${encoded}`,
+          deepLink: (encoded, raw) =>
+            `fleamarket://search?keyword=${encodeURIComponent(raw)}`,
           className: "bg-emerald-600 hover:bg-emerald-500",
         },
         {
           id: "jd",
           label: "京东",
-          url: (q) => `https://search.jd.com/Search?keyword=${q}`,
+          url: (encoded) => `https://search.jd.com/Search?keyword=${encoded}`,
           className: "bg-purple-600 hover:bg-purple-500",
         },
       ];
@@ -173,6 +185,41 @@
         return keywordInput.value.trim();
       }
 
+      function closeKeyboard() {
+        if (document.activeElement === keywordInput) {
+          keywordInput.blur();
+        }
+        window.scrollTo({ top: 0, behavior: "auto" });
+      }
+
+      function handleVisibilityReturn() {
+        if (!document.hidden) {
+          closeKeyboard();
+        }
+      }
+
+      document.addEventListener("visibilitychange", handleVisibilityReturn);
+      window.addEventListener("pageshow", handleVisibilityReturn);
+
+      function openNewTab(url) {
+        window.open(url, "_blank", "noopener");
+      }
+
+      function invokeDeepLink(url) {
+        if (!url) return;
+        try {
+          const iframe = document.createElement("iframe");
+          iframe.style.display = "none";
+          iframe.src = url;
+          document.body.appendChild(iframe);
+          setTimeout(() => {
+            iframe.remove();
+          }, 1500);
+        } catch (error) {
+          console.warn("Unable to trigger deep link", error);
+        }
+      }
+
       function openSearch(platformId) {
         const query = getQuery();
         if (!query) {
@@ -182,8 +229,21 @@
         }
 
         const platform = platforms.find((p) => p.id === platformId) || platforms[0];
-        const url = platform.url(encodeURIComponent(query));
-        window.open(url, "_blank", "noopener");
+        const encoded = encodeURIComponent(query);
+        const fallbackUrl = platform.url(encoded, query);
+        const mobileUrl =
+          isMobileDevice && typeof platform.mobileUrl === "function"
+            ? platform.mobileUrl(encoded, query)
+            : null;
+        const targetUrl = mobileUrl || fallbackUrl;
+
+        closeKeyboard();
+
+        if (isMobileDevice && typeof platform.deepLink === "function") {
+          invokeDeepLink(platform.deepLink(encoded, query));
+        }
+
+        openNewTab(targetUrl);
       }
 
       function renderButtons() {
@@ -215,7 +275,15 @@
 
       clearBtn.addEventListener("click", () => {
         keywordInput.value = "";
-        keywordInput.focus();
+        if (!isMobileDevice) {
+          keywordInput.focus();
+        }
+      });
+
+      window.addEventListener("load", () => {
+        if (!isMobileDevice) {
+          keywordInput.focus({ preventScroll: true });
+        }
       });
 
       renderButtons();
