@@ -144,23 +144,6 @@
             `https://mobile.yangkeduo.com/search_result.html?search_key=${encoded}`,
           className: "bg-rose-500 hover:bg-rose-400",
         },
-        {
-          id: "xianyu",
-          label: "闲鱼",
-          url: (encoded) =>
-            `https://s.2.taobao.com/list/waterfall/waterfall.htm?search_key=${encoded}`,
-          mobileUrl: (encoded) =>
-            `https://h5.m.goofish.com/app/xianyu/new_item_list.html?searchKey=${encoded}`,
-          deepLink: (encoded, raw) =>
-            `fleamarket://search?keyword=${encodeURIComponent(raw)}`,
-          className: "bg-emerald-600 hover:bg-emerald-500",
-        },
-        {
-          id: "jd",
-          label: "京东",
-          url: (encoded) => `https://search.jd.com/Search?keyword=${encoded}`,
-          className: "bg-purple-600 hover:bg-purple-500",
-        },
       ];
 
       const keywordInput = document.getElementById("keyword");
