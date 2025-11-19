@@ -26,7 +26,8 @@
       }
       body {
         min-height: 100vh;
-        background: #F5F5F7;
+        background: #f5f5f7;
+        color: #1d1d1f;
       }
       .fade-in {
         animation: fadeIn 0.8s ease forwards;
@@ -41,23 +42,58 @@
           transform: translateY(0);
         }
       }
+      .glass-shell {
+        background: rgba(255, 255, 255, 0.72);
+        border-radius: 28px;
+        border: 1.5px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 25px 60px rgba(13, 23, 47, 0.12), 0 5px 18px rgba(15, 23, 42, 0.06);
+        backdrop-filter: blur(30px);
+        -webkit-backdrop-filter: blur(30px);
+      }
+      .glass-button {
+        background: rgba(255, 255, 255, 0.58);
+        border: 2px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05), 0 2px 6px rgba(0, 0, 0, 0.04);
+        backdrop-filter: blur(30px);
+        -webkit-backdrop-filter: blur(30px);
+        position: relative;
+        overflow: hidden;
+      }
+      .glass-button::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(0, 122, 255, 0.08), transparent 65%);
+        opacity: 0;
+        transition: opacity 0.2s ease;
+      }
+      .glass-button:hover::before {
+        opacity: 1;
+      }
+      .glass-button:hover {
+        border-color: rgba(0, 122, 255, 0.6);
+        box-shadow: 0 12px 30px rgba(0, 122, 255, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04);
+        color: #007aff;
+      }
+      .glass-button:active {
+        transform: scale(0.985);
+      }
     </style>
   </head>
-  <body class="flex items-center justify-center px-4 py-10">
+  <body class="flex items-center justify-center px-4 py-12">
     <main
-      class="w-full max-w-[615px] px-6 fade-in"
+      class="glass-shell w-full max-w-[615px] px-8 py-10 space-y-10 fade-in"
     >
-      <header class="text-center mb-10">
-        <h1 class="text-[#1D1D1F] mb-4" style="font-size: 36px; font-weight: 600; letter-spacing: 2px;">
-          FOCUS MODE
-        </h1>
-        <p class="text-[#86868B]" style="font-size: 15px; font-weight: 400;">
+      <header class="space-y-4 text-center text-[#1D1D1F]">
+        <p class="text-xs tracking-[0.35em] uppercase text-[#86868B]">Focus Mode</p>
+        <h1 class="text-[36px] font-semibold tracking-[0.06em]">FOCUS MODE</h1>
+        <p class="text-[#86868B] text-sm">
           输入关键词，直达目标平台搜索结果。保持专注，不被信息流打扰。
         </p>
       </header>
 
-      <section class="mb-6">
-        <label for="keyword" class="block text-[#1D1D1F] mb-3" style="font-size: 14px; font-weight: 500;"
+      <section class="space-y-4">
+        <label for="keyword" class="text-sm font-medium text-[#1D1D1F]"
           >搜索关键词</label
         >
         <div class="relative">
@@ -65,36 +101,35 @@
             id="keyword"
             type="text"
             placeholder="支持中文，回车默认搜索知乎"
-            class="w-full px-5 py-4 bg-[#E5E5EA] text-[#1D1D1F] placeholder-[#86868B] rounded-[12px] border-none outline-none transition-all duration-200 focus:bg-[#D1D1D6]"
-            style="font-size: 15px; font-weight: 400;"
+            class="w-full rounded-[12px] border-2 border-[#E5E5EA] bg-white px-5 py-4 text-base text-[#1D1D1F] placeholder-[#86868B] transition shadow-sm focus:border-[#007AFF] focus:shadow-[0_0_0_4px_rgba(0,122,255,0.12)] focus:outline-none"
           />
           <button
             id="clearInput"
-            class="absolute right-4 top-1/2 -translate-y-1/2 text-[#86868B] hover:text-[#1D1D1F] transition-colors"
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-[#86868B] hover:text-[#007AFF] transition"
             aria-label="清除输入"
-            style="font-size: 18px; line-height: 1;"
           >
             ✕
           </button>
         </div>
       </section>
 
-      <section aria-label="搜索平台" class="mb-8">
-        <div class="flex items-center justify-between mb-4">
-          <span class="text-[#1D1D1F]" style="font-size: 14px; font-weight: 500;">快速跳转</span>
-          <span class="text-[#86868B]" style="font-size: 13px; font-weight: 400;">新标签页打开</span>
+      <section aria-label="搜索平台" class="space-y-4">
+        <div class="flex items-center justify-between text-[#86868B] text-xs uppercase tracking-[0.3em]">
+          <span>快速跳转</span>
+          <span>新标签页打开</span>
         </div>
         <div id="platformGrid" class="grid grid-cols-2 gap-4"></div>
       </section>
 
-      <footer class="text-center text-[#86868B]" style="font-size: 13px; font-weight: 400;">
-        默认回车搜索: <span class="text-[#007AFF]" style="font-weight: 500;">知乎</span> · 支持移动端 & 桌面端
+      <footer class="text-center text-sm text-[#86868B]">
+        打开浏览器设置，<span class="text-[#007AFF] font-semibold">添加到桌面</span>
+        <div class="mt-1">支持移动端 & 桌面端</div>
       </footer>
     </main>
 
     <div
       id="toast"
-      class="fixed left-1/2 -translate-x-1/2 bottom-6 bg-[#1D1D1F]/90 text-white px-4 py-3 rounded-2xl text-sm shadow-lg backdrop-blur-md opacity-0 pointer-events-none transition"
+      class="fixed left-1/2 -translate-x-1/2 bottom-6 bg-white border border-white/80 text-[#1D1D1F] px-4 py-3 rounded-2xl text-sm shadow-[0_10px_30px_rgba(15,23,42,0.12)] backdrop-blur-md opacity-0 pointer-events-none transition"
       role="status"
       aria-live="polite"
     ></div>
@@ -109,7 +144,7 @@
           id: "zhihu",
           label: "知乎",
           url: (encoded) => `https://www.zhihu.com/search?type=content&q=${encoded}`,
-          className: "bg-blue-600 hover:bg-blue-500",
+          className: "",
         },
         {
           id: "xiaohongshu",
@@ -120,32 +155,32 @@
             `https://www.xiaohongshu.com/search_result?keyword=${encoded}&source=webapp`,
           deepLink: (encoded, raw) =>
             `xhsdiscover://search/result?keyword=${encodeURIComponent(raw)}`,
-          className: "bg-red-500 hover:bg-red-400",
+          className: "",
         },
         {
           id: "weibo",
           label: "微博",
           url: (encoded) => `https://s.weibo.com/weibo?q=${encoded}`,
-          className: "bg-yellow-500 text-slate-900 hover:bg-yellow-400",
+          className: "",
         },
         {
           id: "bilibili",
           label: "哔哩哔哩",
           url: (encoded) => `https://search.bilibili.com/all?keyword=${encoded}`,
-          className: "bg-pink-600 hover:bg-pink-500",
+          className: "",
         },
         {
           id: "taobao",
           label: "淘宝",
           url: (encoded) => `https://s.taobao.com/search?q=${encoded}`,
-          className: "bg-orange-500 hover:bg-orange-400",
+          className: "",
         },
         {
           id: "pinduoduo",
           label: "拼多多",
           url: (encoded) =>
             `https://mobile.yangkeduo.com/search_result.html?search_key=${encoded}`,
-          className: "bg-rose-500 hover:bg-rose-400",
+          className: "",
         },
       ];
 
@@ -238,25 +273,13 @@
           const button = document.createElement("button");
           button.type = "button";
           button.dataset.platform = platform.id;
-          button.className = "group relative overflow-hidden rounded-[16px] px-6 py-6 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] focus:outline-none";
-          button.style.cssText = `
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05), 0 2px 6px rgba(0, 0, 0, 0.03);
-          `;
-          
-          const span = document.createElement("span");
-          span.className = "relative z-10 text-[#1D1D1F] transition-transform duration-300 group-hover:scale-105 block";
-          span.style.cssText = "font-size: 17px; font-weight: 600; letter-spacing: 0.5px;";
-          span.textContent = platform.label;
-          
-          const hoverEffect = document.createElement("div");
-          hoverEffect.className = "absolute inset-0 bg-gradient-to-br from-white/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300";
-          
-          button.appendChild(span);
-          button.appendChild(hoverEffect);
+          button.className = [
+            "glass-button group w-full min-h-[90px] rounded-[16px] text-[17px] font-semibold tracking-[0.02em] flex items-center justify-center text-[#1D1D1F] hover:text-[#007AFF] transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#007AFF]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
+            platform.className,
+          ]
+            .filter(Boolean)
+            .join(" ");
+          button.textContent = platform.label;
           button.addEventListener("click", () => openSearch(platform.id));
           fragment.appendChild(button);
         });
@@ -274,12 +297,6 @@
         keywordInput.value = "";
         if (!isMobileDevice) {
           keywordInput.focus();
-        }
-      });
-
-      window.addEventListener("load", () => {
-        if (!isMobileDevice) {
-          keywordInput.focus({ preventScroll: true });
         }
       });
 
