@@ -118,24 +118,25 @@
           <label class="block text-[#1D1D1F] mb-3 text-[14px] font-medium">搜索关键词</label>
           
           <div id="searchBox" class="relative bg-white rounded-[16px] border-2 border-[#E5E5EA] transition-all duration-200 focus-within:border-[#007AFF] focus-within:shadow-[0_0_0_4px_rgba(0,122,255,0.1)]">
-            <div class="flex items-center gap-3 px-4 py-3">
+            
+            <div class="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3">
               
-              <button id="platformTrigger" class="flex items-center gap-2 px-3 py-2 bg-[#f5f5f7] rounded-[10px] hover:bg-[#e5e5ea] transition-all duration-200 flex-shrink-0 group">
+              <button id="platformTrigger" class="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-2 bg-[#f5f5f7] rounded-[10px] hover:bg-[#e5e5ea] transition-all duration-200 flex-shrink-0 group">
                 <div id="currentPlatformIcon" class="w-5 h-5 flex items-center justify-center"></div>
-                <span id="currentPlatformName" class="text-[#1D1D1F] text-[14px] font-medium">知乎</span>
+                <span id="currentPlatformName" class="text-[#1D1D1F] text-[14px] font-medium hidden sm:inline">知乎</span>
                 <i data-lucide="chevron-down" class="w-4 h-4 text-[#86868B]"></i>
               </button>
 
-              <input id="searchInput" type="text" placeholder="" class="flex-1 bg-transparent text-[#1D1D1F] placeholder-[#86868B] outline-none text-[15px]" autocomplete="off" />
+              <input id="searchInput" type="text" placeholder="" class="flex-1 bg-transparent text-[#1D1D1F] placeholder-[#86868B] outline-none text-[15px] min-w-[50px]" autocomplete="off" />
 
-              <button id="historyTrigger" class="px-3 py-2 text-[#86868B] hover:text-[#007AFF] hover:bg-[#007AFF]/10 rounded-[10px] transition-all duration-200 flex-shrink-0">
+              <button id="historyTrigger" class="px-2 sm:px-3 py-1 sm:py-2 text-[#86868B] hover:text-[#007AFF] hover:bg-[#007AFF]/10 rounded-[10px] transition-all duration-200 flex-shrink-0">
                 <div class="flex items-center gap-2">
                   <i data-lucide="clock" class="w-4 h-4"></i>
                   <span class="text-[14px] hidden sm:inline">历史</span>
                 </div>
               </button>
 
-              <button id="searchBtn" class="px-5 py-2 bg-[#86868B] text-white rounded-[10px] transition-all duration-200 flex-shrink-0 active:scale-95 flex items-center gap-2 hover:bg-[#007AFF]">
+              <button id="searchBtn" class="px-3 sm:px-5 py-1 sm:py-2 bg-[#86868B] text-white rounded-[10px] transition-all duration-200 flex-shrink-0 active:scale-95 flex items-center gap-2 hover:bg-[#007AFF]">
                 <span class="text-[14px] font-medium hidden sm:inline">搜索</span>
                 <i data-lucide="search" class="w-4 h-4"></i>
               </button>
@@ -168,7 +169,7 @@
               <span class="text-[#1D1D1F] text-[14px] font-medium">快速跳转</span>
               <span class="text-[#86868B] text-[13px]">新标签页打开</span>
             </div>
-            </div>
+          </div>
           
           <div class="grid grid-cols-2 gap-3 sm:gap-4" id="quickJumpGrid"></div>
         </div>
@@ -225,7 +226,6 @@
         quickJumpGrid: document.getElementById('quickJumpGrid'),
         toast: document.getElementById('toast'),
         searchBox: document.getElementById('searchBox'),
-        // 确保使用新的 ID 或更新获取元素的方式
         addFavoriteTip: document.getElementById('addFavoriteTip') 
       };
 
@@ -249,14 +249,16 @@
         els.searchInput.oninput = (e) => {
           state.searchQuery = e.target.value;
           const hasQuery = state.searchQuery.trim().length > 0;
-          els.searchBtn.className = `px-5 py-2 rounded-[10px] transition-all duration-200 flex-shrink-0 active:scale-95 flex items-center gap-2 ${hasQuery ? 'bg-[#007AFF] text-white hover:bg-[#0051D5]' : 'bg-[#86868B] text-white hover:bg-[#007AFF]'}`;
+          // 确保按钮样式在移动端正确
+          const btnClassBase = `px-3 sm:px-5 py-1 sm:py-2 rounded-[10px] transition-all duration-200 flex-shrink-0 active:scale-95 flex items-center gap-2`;
+          const btnClassColor = hasQuery ? 'bg-[#007AFF] text-white hover:bg-[#0051D5]' : 'bg-[#86868B] text-white hover:bg-[#007AFF]';
+          els.searchBtn.className = `${btnClassBase} ${btnClassColor}`;
         };
 
         els.searchInput.onkeypress = (e) => { if (e.key === 'Enter') handleSearch(); };
         els.searchBtn.onclick = handleSearch;
         els.clearHistory.onclick = clearHistory;
 
-        // 重新绑定 click 事件到新的位置的元素
         els.addFavoriteTip.onclick = (event) => {
           event.preventDefault();
           const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
@@ -279,10 +281,15 @@
 
       function updateSelectedPlatformUI() {
         els.currentPlatformIcon.innerHTML = state.selectedPlatform.icon;
-        els.currentPlatformName.textContent = state.selectedPlatform.name;
+        // 修复问题 2: 动态更新 UI 时，确保名称不显示在 mobile
+        if (window.innerWidth >= 640) { // Tailwind's 'sm' breakpoint
+             els.currentPlatformName.textContent = state.selectedPlatform.name;
+        } else {
+             els.currentPlatformName.textContent = ''; 
+        }
       }
 
-      // 需求 5: 动态面板只展示图标，删除 app 的名字
+      // 动态面板只展示图标 (问题 3) - 保持上次修改的逻辑
       function renderPlatformPanel() {
         els.platformGrid.innerHTML = PLATFORMS.map(p => `
           <button onclick="selectPlatform('${p.id}')" class="flex items-center justify-center h-16 w-full rounded-[12px] transition-all duration-200 ${state.selectedPlatform.id === p.id ? 'bg-white border-2 border-[#007AFF]' : 'bg-white/40 hover:bg-white/60 border-2 border-transparent'}">
