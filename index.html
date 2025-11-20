@@ -25,7 +25,7 @@
       .no-scrollbar::-webkit-scrollbar { display: none; }
       .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       
-      /* 玻璃面板效果 (用于下拉菜单) */
+      /* 玻璃面板效果 */
       .glass-panel {
         background: rgba(255, 255, 255, 0.7);
         backdrop-filter: blur(20px);
@@ -34,7 +34,7 @@
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
       }
 
-      /* --- 整个页面的核心内容外框样式 --- */
+      /* 页面外框 */
       .app-container {
         box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.8);
@@ -43,29 +43,24 @@
         -webkit-backdrop-filter: blur(30px);
       }
       
-      /* --- 快速跳转卡片样式 --- */
+      /* 卡片样式 */
       .card-hover-effect { 
         position: relative;
         overflow: hidden;
-        /* 默认样式 */
         border: 2px solid rgba(255, 255, 255, 0.8);
         background: rgba(255, 255, 255, 0.6);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 4px rgba(0, 0, 0, 0.02);
         transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
       }
       .card-hover-effect:hover {
-        /* 悬停时的边框和阴影 */
         border-color: #007AFF;
         box-shadow: 0 8px 20px rgba(0, 122, 255, 0.15), 0 0 0 3px rgba(0, 122, 255, 0.1);
         transform: scale(1.01);
       }
       .card-hover-effect:active {
-        /* 点击反馈 */
         transform: scale(0.98);
         transition: transform 0.1s ease-out;
       }
-
-      /* Subtle hover effect (Gradient) */
       .card-hover-gradient {
         position: absolute;
         inset: 0;
@@ -76,14 +71,10 @@
       .card-hover-effect:hover .card-hover-gradient {
         opacity: 1;
       }
-
-      /* 代码优化点：将文本样式集中定义，实现 MD 文件中的 letter-spacing !!! */
       .card-hover-effect .platform-name {
-        /* font-size: 17px; 移到 JS 模板的 inline class 中，使用 sm:text-[17px] */
         font-weight: 600;
         letter-spacing: 0.5px; 
       }
-      /* --- 快速跳转卡片 END --- */
 
       /* 面板动画 */
       .panel-transition {
@@ -162,7 +153,6 @@
             </button>
         </div>
 
-
         <div class="mb-8">
           <div class="flex items-end justify-between mb-4">
             <div class="flex items-baseline gap-4 hidden sm:flex"> 
@@ -170,7 +160,6 @@
               <span class="text-[#86868B] text-[13px]">新标签页打开</span>
             </div>
           </div>
-          
           <div class="grid grid-cols-2 gap-3 sm:gap-4" id="quickJumpGrid"></div>
         </div>
 
@@ -179,12 +168,12 @@
         </div>
       </div>
     </div>
+    
     <div id="toast" class="fixed left-1/2 -translate-x-1/2 bottom-10 bg-black/80 text-white px-6 py-3 rounded-full text-sm shadow-lg opacity-0 pointer-events-none transition-all duration-300 z-50">提示信息</div>
 
     <script>
       // --- 核心配置 ---
       const ICONS = {
-        // 请确保您的 icons 文件夹中有名为 xxx.png 的图片
         zhihu:       `<img src="icons/zhihu.png" class="w-full h-full object-contain">`,
         xiaohongshu: `<img src="icons/xiaohongshu.png" class="w-full h-full object-contain">`,
         weibo:       `<img src="icons/weibo.png" class="w-full h-full object-contain">`,
@@ -193,6 +182,7 @@
         pinduoduo:   `<img src="icons/pinduoduo.png" class="w-full h-full object-contain">`
       };
 
+      // 平台配置：Web URL 保持不变，App 协议在 handleSearch 中处理
       const PLATFORMS = [
         { id: "zhihu", name: "知乎", icon: ICONS.zhihu, url: "https://www.zhihu.com/search?type=content&q=" },
         { id: "xiaohongshu", name: "小红书", icon: ICONS.xiaohongshu, url: "https://www.xiaohongshu.com/search_result?keyword=" },
@@ -202,7 +192,6 @@
         { id: "pinduoduo", name: "拼多多", icon: ICONS.pinduoduo, url: "https://mobile.yangkeduo.com/search_result.html?search_key=" },
       ];
 
-      // --- 状态与元素 (保持不变) ---
       let state = {
         selectedPlatform: PLATFORMS[0],
         searchQuery: "",
@@ -236,7 +225,6 @@
         renderHistoryList();
         updateSelectedPlatformUI();
         
-        // 绑定事件 (保持不变)
         els.platformTrigger.onclick = (e) => { e.stopPropagation(); togglePlatformPanel(); };
         els.historyTrigger.onclick = (e) => { e.stopPropagation(); toggleHistoryPanel(); };
         
@@ -249,7 +237,6 @@
         els.searchInput.oninput = (e) => {
           state.searchQuery = e.target.value;
           const hasQuery = state.searchQuery.trim().length > 0;
-          // 确保按钮样式在移动端正确
           const btnClassBase = `px-4 sm:px-5 py-2 sm:py-2 rounded-[10px] transition-all duration-200 flex-shrink-0 active:scale-95 flex items-center gap-2`;
           const btnClassColor = hasQuery ? 'bg-[#007AFF] text-white hover:bg-[#0051D5]' : 'bg-[#86868B] text-white hover:bg-[#007AFF]';
           els.searchBtn.className = `${btnClassBase} ${btnClassColor}`;
@@ -271,9 +258,7 @@
         };
 
         document.onclick = (e) => {
-          const searchBox = document.getElementById('searchBox');
-          const toast = document.getElementById('toast');
-          if (searchBox && !searchBox.contains(e.target) && !toast.contains(e.target)) {
+          if (els.searchBox && !els.searchBox.contains(e.target) && !els.toast.contains(e.target)) {
               closeAllPanels();
           }
         };
@@ -281,15 +266,13 @@
 
       function updateSelectedPlatformUI() {
         els.currentPlatformIcon.innerHTML = state.selectedPlatform.icon;
-        // 修复问题 2: 动态更新 UI 时，确保名称不显示在 mobile
-        if (window.innerWidth >= 640) { // Tailwind's 'sm' breakpoint
+        if (window.innerWidth >= 640) { 
              els.currentPlatformName.textContent = state.selectedPlatform.name;
         } else {
              els.currentPlatformName.textContent = ''; 
         }
       }
 
-      // 动态面板只展示图标 (问题 3) - 保持上次修改的逻辑
       function renderPlatformPanel() {
         els.platformGrid.innerHTML = PLATFORMS.map(p => `
           <button onclick="selectPlatform('${p.id}')" class="flex items-center justify-center h-16 w-full rounded-[12px] transition-all duration-200 ${state.selectedPlatform.id === p.id ? 'bg-white border-2 border-[#007AFF]' : 'bg-white/40 hover:bg-white/60 border-2 border-transparent'}">
@@ -397,16 +380,28 @@
         showToast("历史记录已清空");
       };
 
+      // 核心修改：处理搜索跳转
       function handleSearch() {
         const query = state.searchQuery.trim();
         if (!query) { showToast("请输入搜索内容"); els.searchInput.focus(); return; }
         
+        // 保存历史
         const newHistory = [{ query, platformName: state.selectedPlatform.name }, ...state.searchHistory.filter(h => h.query !== query)].slice(0, 10);
         state.searchHistory = newHistory;
         localStorage.setItem('focusMode_history', JSON.stringify(newHistory));
         renderHistoryList();
         
-        window.open(state.selectedPlatform.url + encodeURIComponent(query), '_blank');
+        // 移动端 + 小红书 跳转逻辑
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        if (isMobile && state.selectedPlatform.id === 'xiaohongshu') {
+             // 使用小红书协议头直接唤起 App
+             // 注意：需要用户已安装 App
+             window.location.href = `xhsdiscover://search/result?keyword=${encodeURIComponent(query)}`;
+        } else {
+             // 其他情况或 PC 端使用网页跳转
+             window.open(state.selectedPlatform.url + encodeURIComponent(query), '_blank');
+        }
+        
         closeAllPanels();
       }
 
