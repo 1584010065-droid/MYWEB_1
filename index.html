@@ -79,7 +79,7 @@
 
       /* 代码优化点：将文本样式集中定义，实现 MD 文件中的 letter-spacing */
       .card-hover-effect .platform-name {
-        font-size: 17px;
+        /* font-size: 17px; 移到 JS 模板的 inline class 中，使用 sm:text-[17px] */
         font-weight: 600;
         letter-spacing: 0.5px; 
       }
@@ -128,15 +128,15 @@
 
               <input id="searchInput" type="text" placeholder="请输入搜索的主题/关键词" class="flex-1 bg-transparent text-[#1D1D1F] placeholder-[#86868B] outline-none text-[15px]" autocomplete="off" />
 
-              <button id="historyTrigger" class="px-3 py-2 text-[#86868B] hover:text-[#007AFF] hover:bg-[#007AFF]/10 rounded-[10px] transition-all duration-200 flex-shrink-0">
+              <button id="historyTrigger" class="px-3 py-2 text-[#86868B] hover:text-[#007AFF] hover:bg-[#007AFF]/10 rounded-[10px] transition-all duration-200 flex-shrink-0 hidden sm:block">
                 <div class="flex items-center gap-2">
                   <i data-lucide="clock" class="w-4 h-4"></i>
-                  <span class="text-[14px] hidden sm:inline">历史</span>
+                  <span class="text-[14px]">历史</span>
                 </div>
               </button>
 
               <button id="searchBtn" class="px-5 py-2 bg-[#86868B] text-white rounded-[10px] transition-all duration-200 flex-shrink-0 active:scale-95 flex items-center gap-2 hover:bg-[#007AFF]">
-                <span class="text-[14px] font-medium">搜索</span>
+                <span class="text-[14px] font-medium hidden sm:inline">搜索</span>
                 <i data-lucide="search" class="w-4 h-4"></i>
               </button>
             </div>
@@ -166,7 +166,7 @@
             </button>
           </div>
           
-          <div class="grid grid-cols-2 gap-4" id="quickJumpGrid"></div>
+          <div class="grid grid-cols-2 gap-3 sm:gap-4" id="quickJumpGrid"></div>
         </div>
 
         <div class="text-center text-[#86868B] text-[13px]">
@@ -287,14 +287,15 @@
         `).join('');
       }
 
+      // 优化后的 renderQuickJump 函数: 调整了 padding、图标大小和文字大小，并添加了 truncate
       function renderQuickJump() {
         els.quickJumpGrid.innerHTML = PLATFORMS.map(p => `
-          <button onclick="selectPlatformFromQuickJump('${p.id}')" class="card-hover-effect group relative rounded-[16px] px-5 py-5 text-left w-full">
-            <div class="relative z-10 flex items-center gap-4">
-              <div class="w-10 h-10 flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-110 rounded-lg overflow-hidden">
+          <button onclick="selectPlatformFromQuickJump('${p.id}')" class="card-hover-effect group relative rounded-[16px] px-3 py-4 sm:px-5 sm:py-5 text-left w-full h-full">
+            <div class="relative z-10 flex items-center sm:gap-4 gap-3">
+              <div class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-110 rounded-lg overflow-hidden">
                 ${p.icon}
               </div>
-              <span class="platform-name text-[#1D1D1F] flex-1 group-hover:text-[#007AFF] transition-colors duration-200">${p.name}</span>
+              <span class="platform-name text-[#1D1D1F] flex-1 group-hover:text-[#007AFF] transition-colors duration-200 text-base sm:text-[17px] truncate">${p.name}</span>
             </div>
             <div class="card-hover-gradient"></div>
           </button>
