@@ -126,7 +126,7 @@
                 <i data-lucide="chevron-down" class="w-4 h-4 text-[#86868B]"></i>
               </button>
 
-              <input id="searchInput" type="text" placeholder="请输入搜索的主题/关键词" class="flex-1 bg-transparent text-[#1D1D1F] placeholder-[#86868B] outline-none text-[15px]" autocomplete="off" />
+              <input id="searchInput" type="text" placeholder="" class="flex-1 bg-transparent text-[#1D1D1F] placeholder-[#86868B] outline-none text-[15px]" autocomplete="off" />
 
               <button id="historyTrigger" class="px-3 py-2 text-[#86868B] hover:text-[#007AFF] hover:bg-[#007AFF]/10 rounded-[10px] transition-all duration-200 flex-shrink-0">
                 <div class="flex items-center gap-2">
@@ -154,17 +154,21 @@
             </div>
           </div>
         </div>
+        
+        <div class="mb-6 mt-2 text-center">
+            <button id="addFavoriteTip" class="text-[#007AFF] text-xs font-medium hover:opacity-80 transition flex-shrink-0" aria-label="收藏本页到浏览器">
+                打开浏览器设置，点击收藏/添加到桌面
+            </button>
+        </div>
+
 
         <div class="mb-8">
           <div class="flex items-end justify-between mb-4">
-            <div class="flex items-baseline gap-4"> 
+            <div class="flex items-baseline gap-4 hidden sm:flex"> 
               <span class="text-[#1D1D1F] text-[14px] font-medium">快速跳转</span>
               <span class="text-[#86868B] text-[13px]">新标签页打开</span>
             </div>
-            <button id="addFavoriteTip" class="text-[#007AFF] text-xs font-medium hover:opacity-80 transition flex-shrink-0 text-right" aria-label="收藏本页到浏览器">
-                打开浏览器设置，点击收藏/添加到桌面
-            </button>
-          </div>
+            </div>
           
           <div class="grid grid-cols-2 gap-3 sm:gap-4" id="quickJumpGrid"></div>
         </div>
@@ -221,7 +225,8 @@
         quickJumpGrid: document.getElementById('quickJumpGrid'),
         toast: document.getElementById('toast'),
         searchBox: document.getElementById('searchBox'),
-        addFavoriteTip: document.getElementById('addFavoriteTip')
+        // 确保使用新的 ID 或更新获取元素的方式
+        addFavoriteTip: document.getElementById('addFavoriteTip') 
       };
 
       function init() {
@@ -251,6 +256,7 @@
         els.searchBtn.onclick = handleSearch;
         els.clearHistory.onclick = clearHistory;
 
+        // 重新绑定 click 事件到新的位置的元素
         els.addFavoriteTip.onclick = (event) => {
           event.preventDefault();
           const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
@@ -276,13 +282,13 @@
         els.currentPlatformName.textContent = state.selectedPlatform.name;
       }
 
+      // 需求 5: 动态面板只展示图标，删除 app 的名字
       function renderPlatformPanel() {
         els.platformGrid.innerHTML = PLATFORMS.map(p => `
-          <button onclick="selectPlatform('${p.id}')" class="flex flex-col items-center gap-2 px-4 py-4 rounded-[12px] transition-all duration-200 ${state.selectedPlatform.id === p.id ? 'bg-white border-2 border-[#007AFF]' : 'bg-white/40 hover:bg-white/60 border-2 border-transparent'}">
+          <button onclick="selectPlatform('${p.id}')" class="flex items-center justify-center h-16 w-full rounded-[12px] transition-all duration-200 ${state.selectedPlatform.id === p.id ? 'bg-white border-2 border-[#007AFF]' : 'bg-white/40 hover:bg-white/60 border-2 border-transparent'}">
             <div class="w-8 h-8 rounded-lg overflow-hidden">
               ${p.icon}
             </div>
-            <span class="text-[13px] font-medium ${state.selectedPlatform.id === p.id ? 'text-[#007AFF]' : 'text-[#1D1D1F]'}">${p.name}</span>
           </button>
         `).join('');
       }
