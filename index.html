@@ -190,29 +190,29 @@
           </p>
         </div>
 
-        <div class="mb-6 relative z-50">
-          <label class="block text-[#1D1D1F] mb-3 text-[14px] font-medium">搜索关键词</label>
+        <div class="mb-10 relative z-50">
+          <label class="block text-[#1D1D1F] mb-4 text-[16px] font-semibold">搜索关键词</label>
           
-          <div id="searchBox" class="relative bg-white rounded-[16px] border-2 border-[#E5E5EA] transition-all duration-200 focus-within:border-[#007AFF] focus-within:shadow-[0_0_0_4px_rgba(0,122,255,0.1)]">
-            <div class="flex items-center gap-1 px-2 py-2">
+          <div id="searchBox" class="relative bg-white rounded-[20px] border-3 border-[#E5E5EA] transition-all duration-200 focus-within:border-[#007AFF] focus-within:shadow-[0_0_0_6px_rgba(0,122,255,0.15)]">
+            <div class="flex items-center gap-2 px-4 py-4">
               
-              <button id="platformTrigger" class="flex items-center gap-1 px-2 py-1.5 bg-[#f5f5f7] rounded-[8px] hover:bg-[#e5e5ea] transition-all duration-200 flex-shrink-0 group">
-                <div id="currentPlatformIcon" class="w-3 h-3 flex items-center justify-center"></div>
-                <span id="currentPlatformName" class="text-[#1D1D1F] text-[12px] font-medium hidden xs:inline">知乎</span>
-                <i data-lucide="chevron-down" class="w-3 h-3 text-[#86868B]"></i>
+              <button id="platformTrigger" class="flex items-center gap-2 px-3 py-2.5 bg-[#f5f5f7] rounded-[10px] hover:bg-[#e5e5ea] transition-all duration-200 flex-shrink-0 group">
+                <div id="currentPlatformIcon" class="w-4 h-4 flex items-center justify-center"></div>
+                <span id="currentPlatformName" class="text-[#1D1D1F] text-[14px] font-medium hidden xs:inline">知乎</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-[#86868B]"></i>
               </button>
 
-              <input id="searchInput" type="text" placeholder="请输入搜索关键词" class="mobile-search-input flex-1 bg-transparent text-[#1D1D1F] placeholder-[#86868B] outline-none text-[13px] sm:text-[14px] px-1" autocomplete="off" />
+              <input id="searchInput" type="text" placeholder="请输入搜索关键词" class="mobile-search-input flex-1 bg-transparent text-[#1D1D1F] placeholder-[#86868B] outline-none text-[15px] sm:text-[16px] px-2" autocomplete="off" />
 
-              <div class="flex items-center gap-1 flex-shrink-0">
-                <button id="historyTrigger" class="flex items-center gap-1 px-1.5 py-1.5 text-[#86868B] hover:text-[#007AFF] hover:bg-[#007AFF]/10 rounded-[8px] transition-all duration-200 hidden sm:flex">
-                  <i data-lucide="clock" class="w-3 h-3"></i>
-                  <span class="text-[12px]">历史</span>
+              <div class="flex items-center gap-1.5 flex-shrink-0">
+                <button id="historyTrigger" class="flex items-center gap-1.5 px-2.5 py-2.5 text-[#86868B] hover:text-[#007AFF] hover:bg-[#007AFF]/10 rounded-[10px] transition-all duration-200 hidden sm:flex">
+                  <i data-lucide="clock" class="w-4 h-4"></i>
+                  <span class="text-[14px]">历史</span>
                 </button>
 
-                <button id="searchBtn" class="flex items-center gap-1 px-2 py-1.5 bg-[#86868B] text-white rounded-[8px] transition-all duration-200 hover:bg-[#007AFF]">
-                  <i data-lucide="search" class="w-3 h-3"></i>
-                  <span class="text-[12px] font-medium hidden xs:inline">搜索</span>
+                <button id="searchBtn" class="flex items-center gap-1.5 px-3 py-2.5 bg-[#86868B] text-white rounded-[10px] transition-all duration-200 hover:bg-[#007AFF]">
+                  <i data-lucide="search" class="w-4 h-4"></i>
+                  <span class="text-[14px] font-medium hidden xs:inline">搜索</span>
                 </button>
               </div>
             </div>
@@ -243,7 +243,7 @@
             </button>
           </div>
           
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4" id="quickJumpGrid"></div>
+          <div class="grid grid-cols-2 gap-2" id="quickJumpGrid"></div>
         </div>
 
         <div class="text-center text-[#86868B] text-[13px]">
