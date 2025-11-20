@@ -196,25 +196,27 @@
           <div id="searchBox" class="relative bg-white rounded-[16px] border-2 border-[#E5E5EA] transition-all duration-200 focus-within:border-[#007AFF] focus-within:shadow-[0_0_0_4px_rgba(0,122,255,0.1)]">
             <div class="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3">
               
-              <button id="platformTrigger" class="touch-target flex items-center gap-2 px-2 sm:px-3 py-2 bg-[#f5f5f7] rounded-[10px] hover:bg-[#e5e5ea] transition-all duration-200 flex-shrink-0 group">
-                <div id="currentPlatformIcon" class="w-5 h-5 flex items-center justify-center"></div>
-                <span id="currentPlatformName" class="text-[#1D1D1F] text-[14px] font-medium hidden xs:inline">知乎</span>
-                <i data-lucide="chevron-down" class="w-4 h-4 text-[#86868B]"></i>
+              <button id="platformTrigger" class="touch-target flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 bg-[#f5f5f7] rounded-[10px] hover:bg-[#e5e5ea] transition-all duration-200 flex-shrink-0 group">
+                <div id="currentPlatformIcon" class="w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center"></div>
+                <span id="currentPlatformName" class="text-[#1D1D1F] text-[13px] sm:text-[14px] font-medium hidden xs:inline">知乎</span>
+                <i data-lucide="chevron-down" class="w-3 h-3 sm:w-4 sm:h-4 text-[#86868B]"></i>
               </button>
 
-              <input id="searchInput" type="text" placeholder="请输入搜索的主题/关键词" class="mobile-search-input flex-1 bg-transparent text-[#1D1D1F] placeholder-[#86868B] outline-none text-[15px]" autocomplete="off" />
+              <input id="searchInput" type="text" placeholder="请输入搜索关键词" class="mobile-search-input flex-1 bg-transparent text-[#1D1D1F] placeholder-[#86868B] outline-none text-[14px] sm:text-[15px]" autocomplete="off" />
 
-              <button id="historyTrigger" class="touch-target px-2 sm:px-3 py-2 text-[#86868B] hover:text-[#007AFF] hover:bg-[#007AFF]/10 rounded-[10px] transition-all duration-200 flex-shrink-0 hidden sm:block">
-                <div class="flex items-center gap-2">
-                  <i data-lucide="clock" class="w-4 h-4"></i>
-                  <span class="text-[14px]">历史</span>
-                </div>
-              </button>
+              <div class="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                <button id="historyTrigger" class="touch-target px-2 sm:px-3 py-2 text-[#86868B] hover:text-[#007AFF] hover:bg-[#007AFF]/10 rounded-[10px] transition-all duration-200 hidden sm:block">
+                  <div class="flex items-center gap-1">
+                    <i data-lucide="clock" class="w-3 h-3 sm:w-4 sm:h-4"></i>
+                    <span class="text-[13px] sm:text-[14px]">历史</span>
+                  </div>
+                </button>
 
-              <button id="searchBtn" class="touch-target px-4 sm:px-5 py-2 bg-[#86868B] text-white rounded-[10px] transition-all duration-200 flex-shrink-0 active:scale-95 flex items-center gap-2 hover:bg-[#007AFF]">
-                <span class="text-[14px] font-medium hidden xs:inline">搜索</span>
-                <i data-lucide="search" class="w-4 h-4"></i>
-              </button>
+                <button id="searchBtn" class="touch-target px-3 sm:px-4 py-2 bg-[#86868B] text-white rounded-[10px] transition-all duration-200 flex items-center gap-1 sm:gap-2 hover:bg-[#007AFF]">
+                  <i data-lucide="search" class="w-3 h-3 sm:w-4 sm:h-4"></i>
+                  <span class="text-[13px] sm:text-[14px] font-medium hidden xs:inline">搜索</span>
+                </button>
+              </div>
             </div>
 
             <div id="platformPanel" class="absolute top-[calc(100%+8px)] left-0 right-0 p-4 rounded-[16px] glass-panel z-10 hidden panel-transition panel-enter">
@@ -335,7 +337,7 @@
         els.searchInput.oninput = (e) => {
           state.searchQuery = e.target.value;
           const hasQuery = state.searchQuery.trim().length > 0;
-          els.searchBtn.className = `touch-target px-4 sm:px-5 py-2 rounded-[10px] transition-all duration-200 flex-shrink-0 active:scale-95 flex items-center gap-2 ${hasQuery ? 'bg-[#007AFF] text-white hover:bg-[#0051D5]' : 'bg-[#86868B] text-white hover:bg-[#007AFF]'}`;
+          els.searchBtn.className = `touch-target px-3 sm:px-4 py-2 rounded-[10px] transition-all duration-200 flex items-center gap-1 sm:gap-2 hover:bg-[#007AFF] ${hasQuery ? 'bg-[#007AFF] text-white hover:bg-[#0051D5]' : 'bg-[#86868B] text-white'}`;
         };
 
         els.searchInput.onkeypress = (e) => { if (e.key === 'Enter') handleSearch(); };
