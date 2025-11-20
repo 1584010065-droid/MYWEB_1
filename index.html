@@ -4,60 +4,37 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <title>FOCUS MODE - 免分心搜索</title>
-    <!-- 优化字体加载策略，使用本地字体 + 网络字体的组合 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
     <style>
-      @font-face {
-        font-family: 'Inter';
-        font-style: normal;
-        font-weight: 400;
-        font-display: swap;
-        src: local('Inter'), local('Inter Regular');
-      }
-      
-      /* 优化字体堆栈，优先使用系统字体，避免乱码 */
       :root {
-        font-family: 
-          /* 现代中文字体 */
-          -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Source Han Sans SC',
-          /* Windows中文字体 */
-          'Microsoft YaHei', '微软雅黑', 'Microsoft YaHei UI',
-          /* 英文字体 */
-          'Inter', 'Roboto', 'Helvetica Neue', 'Arial',
-          /* 回退字体 */
-          sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
-        
-        /* 优化字体渲染 */
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        text-rendering: optimizeLegibility;
+        font-family: "Inter", "PingFang SC", "Microsoft YaHei", sans-serif;
       }
-      
-      /* 移动端字体大小优化 */
-      @media (max-width: 640px) {
-        :root {
-          font-size: 16px; /* 防止iOS缩放 */
-        }
-      }
-      
       body {
         background-color: #f5f5f7;
         color: #1d1d1f;
       }
-      
       /* 隐藏滚动条 */
       .no-scrollbar::-webkit-scrollbar { display: none; }
       .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       
       /* 玻璃面板效果 (用于下拉菜单) */
       .glass-panel {
-        background: rgba(255, 255, 255, 0.85);
+        background: rgba(255, 255, 255, 0.7);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.9);
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
       }
 
-      /* 整个页面的核心内容外框样式 */
+      /* --- 整个页面的核心内容外框样式 --- */
       .app-container {
         box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.8);
@@ -66,7 +43,7 @@
         -webkit-backdrop-filter: blur(30px);
       }
       
-      /* 快速跳转卡片样式 */
+      /* --- 快速跳转卡片样式 --- */
       .card-hover-effect { 
         position: relative;
         overflow: hidden;
@@ -102,10 +79,12 @@
 
       /* 代码优化点：将文本样式集中定义，实现 MD 文件中的 letter-spacing */
       .card-hover-effect .platform-name {
+        /* font-size: 17px; 移到 JS 模板的 inline class 中，使用 sm:text-[17px] */
         font-weight: 600;
         letter-spacing: 0.5px; 
       }
-      
+      /* --- 快速跳转卡片 END --- */
+
       /* 面板动画 */
       .panel-transition {
         transition: opacity 0.3s ease-out, transform 0.3s ease-out;
@@ -118,61 +97,6 @@
         opacity: 1; 
         transform: translateY(0); 
       }
-      
-      /* 移动端专用优化 */
-      @media (max-width: 640px) {
-        /* 移动端优化触摸目标大小 */
-        .touch-target {
-          min-height: 44px;
-          min-width: 44px;
-        }
-        
-        /* 移动端优化搜索框 */
-        .mobile-search-input {
-          font-size: 16px; /* 防止iOS缩放 */
-        }
-        
-        /* 移动端优化按钮间距 */
-        .mobile-button-spacing {
-          margin: 0.5rem 0;
-        }
-        
-        /* 移动端卡片优化 */
-        .mobile-card {
-          padding: 1rem;
-          margin-bottom: 0.75rem;
-        }
-      }
-      
-      /* 优化移动端的网格布局 */
-      @media (max-width: 640px) {
-        .mobile-grid {
-          grid-template-columns: 1fr;
-          gap: 0.75rem;
-        }
-      }
-      
-      /* 移动端输入框优化 */
-      @media (max-width: 640px) {
-        .mobile-search-container {
-          padding: 0.75rem;
-        }
-      }
-      
-      /* 触摸反馈优化 */
-      @media (hover: none) and (pointer: coarse) {
-        .card-hover-effect:hover {
-          transform: none;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 4px rgba(0, 0, 0, 0.02);
-          border-color: rgba(255, 255, 255, 0.8);
-        }
-        
-        .card-hover-effect:active {
-          transform: scale(0.95);
-          border-color: #007AFF;
-          box-shadow: 0 8px 20px rgba(0, 122, 255, 0.15), 0 0 0 3px rgba(0, 122, 255, 0.1);
-        }
-      }
     </style>
   </head>
   <body class="flex items-center justify-center min-h-screen px-4 py-8 sm:px-8">
@@ -181,50 +105,50 @@
       
       <div class="w-full max-w-[615px] mx-auto">
         
-        <div class="text-center mb-8 sm:mb-10 space-y-4">
-          <h1 class="text-[#1D1D1F] text-[28px] sm:text-[36px] font-semibold tracking-[1px] sm:tracking-[2px]">
+        <div class="text-center mb-10 space-y-4">
+          <h1 class="text-[#1D1D1F] text-[36px] font-semibold tracking-[2px]">
             FOCUS MODE
           </h1>
-          <p class="text-[#86868B] text-[14px] sm:text-[15px] px-4">
+          <p class="text-[#86868B] text-[15px]">
             直达搜索结果，不受信息流干扰，保持专注。
           </p>
         </div>
 
-        <div class="mb-10 relative z-50">
-          <label class="block text-[#1D1D1F] mb-4 text-[16px] font-semibold">搜索关键词</label>
+        <div class="mb-6 relative z-50">
+          <label class="block text-[#1D1D1F] mb-3 text-[14px] font-medium">搜索关键词</label>
           
-          <div id="searchBox" class="relative bg-white rounded-[20px] border-2 border-[#E5E5EA] transition-all duration-200 focus-within:border-[#007AFF] focus-within:shadow-[0_0_0_6px_rgba(0,122,255,0.15)]">
-            <div class="flex items-center gap-2 px-4 py-4">
+          <div id="searchBox" class="relative bg-white rounded-[16px] border-2 border-[#E5E5EA] transition-all duration-200 focus-within:border-[#007AFF] focus-within:shadow-[0_0_0_4px_rgba(0,122,255,0.1)]">
+            <div class="flex items-center gap-3 px-4 py-3">
               
-              <button id="platformTrigger" class="flex items-center gap-2 px-3 py-2.5 bg-[#f5f5f7] rounded-[10px] hover:bg-[#e5e5ea] transition-all duration-200 flex-shrink-0 group">
-                <div id="currentPlatformIcon" class="w-4 h-4 flex items-center justify-center"></div>
-                <span id="currentPlatformName" class="text-[#1D1D1F] text-[14px] font-medium hidden xs:inline">知乎</span>
+              <button id="platformTrigger" class="flex items-center gap-2 px-3 py-2 bg-[#f5f5f7] rounded-[10px] hover:bg-[#e5e5ea] transition-all duration-200 flex-shrink-0 group">
+                <div id="currentPlatformIcon" class="w-5 h-5 flex items-center justify-center"></div>
+                <span id="currentPlatformName" class="text-[#1D1D1F] text-[14px] font-medium">知乎</span>
                 <i data-lucide="chevron-down" class="w-4 h-4 text-[#86868B]"></i>
               </button>
 
-              <input id="searchInput" type="text" placeholder="请输入搜索关键词" class="mobile-search-input flex-1 bg-transparent text-[#1D1D1F] placeholder-[#86868B] outline-none text-[15px] sm:text-[16px] px-2" autocomplete="off" />
+              <input id="searchInput" type="text" placeholder="请输入搜索的主题/关键词" class="flex-1 bg-transparent text-[#1D1D1F] placeholder-[#86868B] outline-none text-[15px]" autocomplete="off" />
 
-              <div class="flex items-center gap-1.5 flex-shrink-0 h-full">
-                <button id="historyTrigger" class="flex items-center gap-1.5 px-2.5 py-2.5 text-[#86868B] hover:text-[#007AFF] hover:bg-[#007AFF]/10 rounded-[10px] transition-all duration-200 hidden sm:flex h-full self-center">
+              <button id="historyTrigger" class="px-3 py-2 text-[#86868B] hover:text-[#007AFF] hover:bg-[#007AFF]/10 rounded-[10px] transition-all duration-200 flex-shrink-0">
+                <div class="flex items-center gap-2">
                   <i data-lucide="clock" class="w-4 h-4"></i>
-                  <span class="text-[14px]">历史</span>
-                </button>
+                  <span class="text-[14px] hidden sm:inline">历史</span>
+                </div>
+              </button>
 
-                <button id="searchBtn" class="flex items-center gap-1.5 px-3 py-2.5 bg-[#86868B] text-white rounded-[10px] transition-all duration-200 hover:bg-[#007AFF] h-full self-center">
-                  <i data-lucide="search" class="w-4 h-4"></i>
-                  <span class="text-[14px] font-medium hidden xs:inline">搜索</span>
-                </button>
-              </div>
+              <button id="searchBtn" class="px-5 py-2 bg-[#86868B] text-white rounded-[10px] transition-all duration-200 flex-shrink-0 active:scale-95 flex items-center gap-2 hover:bg-[#007AFF]">
+                <span class="text-[14px] font-medium hidden sm:inline">搜索</span>
+                <i data-lucide="search" class="w-4 h-4"></i>
+              </button>
             </div>
 
             <div id="platformPanel" class="absolute top-[calc(100%+8px)] left-0 right-0 p-4 rounded-[16px] glass-panel z-10 hidden panel-transition panel-enter">
-              <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="platformGrid"></div>
+              <div class="grid grid-cols-3 gap-3" id="platformGrid"></div>
             </div>
 
             <div id="historyPanel" class="absolute top-[calc(100%+8px)] left-0 right-0 p-3 rounded-[16px] glass-panel z-10 hidden panel-transition panel-enter">
               <div class="flex items-center justify-between mb-3 px-2">
                 <span class="text-[#1D1D1F] text-[13px] font-semibold">最近搜索</span>
-                <button id="clearHistory" class="text-[#86868B] hover:text-[#FF3B30] text-[12px] touch-target">清空</button>
+                <button id="clearHistory" class="text-[#86868B] hover:text-[#FF3B30] text-[12px]">清空</button>
               </div>
               <div id="historyList" class="space-y-1 max-h-[200px] overflow-y-auto no-scrollbar"></div>
             </div>
@@ -235,15 +159,14 @@
           <div class="flex items-end justify-between mb-4">
             <div class="flex items-baseline gap-4"> 
               <span class="text-[#1D1D1F] text-[14px] font-medium">快速跳转</span>
-              <span class="text-[#86868B] text-[13px] hidden sm:inline">新标签页打开</span>
+              <span class="text-[#86868B] text-[13px]">新标签页打开</span>
             </div>
-            <button id="addFavoriteTip" class="text-[#007AFF] text-xs font-medium hover:opacity-80 transition flex-shrink-0 text-right touch-target" aria-label="收藏本页到浏览器">
-                <span class="hidden sm:inline">打开浏览器设置，点击收藏/添加到桌面</span>
-                <span class="sm:hidden">添加到主屏幕</span>
+            <button id="addFavoriteTip" class="text-[#007AFF] text-xs font-medium hover:opacity-80 transition flex-shrink-0 text-right" aria-label="收藏本页到浏览器">
+                打开浏览器设置，点击收藏/添加到桌面
             </button>
           </div>
           
-          <div class="grid grid-cols-2 gap-2" id="quickJumpGrid"></div>
+          <div class="grid grid-cols-2 gap-3 sm:gap-4" id="quickJumpGrid"></div>
         </div>
 
         <div class="text-center text-[#86868B] text-[13px]">
@@ -253,9 +176,6 @@
     </div>
     <div id="toast" class="fixed left-1/2 -translate-x-1/2 bottom-10 bg-black/80 text-white px-6 py-3 rounded-full text-sm shadow-lg opacity-0 pointer-events-none transition-all duration-300 z-50">提示信息</div>
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    
     <script>
       // --- 核心配置 ---
       const ICONS = {
@@ -304,19 +224,8 @@
         addFavoriteTip: document.getElementById('addFavoriteTip')
       };
 
-      // 检测设备类型的函数
-      function isMobile() {
-        return window.innerWidth <= 640;
-      }
-
       function init() {
-        // 延迟加载图标，避免字体加载阻塞
-        setTimeout(() => {
-          if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
-          }
-        }, 100);
-        
+        lucide.createIcons();
         renderPlatformPanel();
         renderQuickJump();
         renderHistoryList();
@@ -335,7 +244,7 @@
         els.searchInput.oninput = (e) => {
           state.searchQuery = e.target.value;
           const hasQuery = state.searchQuery.trim().length > 0;
-          els.searchBtn.className = `flex items-center gap-1.5 px-3 py-2.5 text-white rounded-[10px] transition-all duration-200 hover:bg-[#007AFF] ${hasQuery ? 'bg-[#007AFF] hover:bg-[#0051D5]' : 'bg-[#86868B]'} h-full self-center`;
+          els.searchBtn.className = `px-5 py-2 rounded-[10px] transition-all duration-200 flex-shrink-0 active:scale-95 flex items-center gap-2 ${hasQuery ? 'bg-[#007AFF] text-white hover:bg-[#0051D5]' : 'bg-[#86868B] text-white hover:bg-[#007AFF]'}`;
         };
 
         els.searchInput.onkeypress = (e) => { if (e.key === 'Enter') handleSearch(); };
@@ -346,20 +255,13 @@
           event.preventDefault();
           const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
           if (isIOS) {
-             showToast("请点击底部 <i data-lucide='share' class='inline w-4 h-4'></i> 按钮，选择\"添加到主屏幕\"", 3000);
-             setTimeout(() => {
-               if (typeof lucide !== 'undefined') {
-                 lucide.createIcons();
-               }
-             }, 10);
+             showToast("请点击底部 <i data-lucide='share' class='inline w-4 h-4'></i> 按钮，选择“添加到主屏幕”", 3000);
+             setTimeout(() => lucide.createIcons(), 10);
           } else {
-             showToast("请点击浏览器菜单栏，选择\"收藏\"或\"添加到主屏幕\"", 3000);
+             showToast("请点击浏览器菜单栏，选择“收藏”或“添加到主屏幕”", 3000);
           }
         };
 
-        // 优化移动端事件监听
-        document.addEventListener('touchstart', () => {}, {passive: true});
-        
         document.onclick = (e) => {
           const searchBox = document.getElementById('searchBox');
           const toast = document.getElementById('toast');
@@ -367,14 +269,6 @@
               closeAllPanels();
           }
         };
-
-        // 响应式处理
-        window.addEventListener('resize', debounce(() => {
-          renderQuickJump();
-          if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
-          }
-        }, 300));
       }
 
       function updateSelectedPlatformUI() {
@@ -383,9 +277,8 @@
       }
 
       function renderPlatformPanel() {
-        const isMobileView = isMobile();
         els.platformGrid.innerHTML = PLATFORMS.map(p => `
-          <button onclick="selectPlatform('${p.id}')" class="touch-target flex flex-col items-center gap-2 px-4 py-4 rounded-[12px] transition-all duration-200 ${state.selectedPlatform.id === p.id ? 'bg-white border-2 border-[#007AFF]' : 'bg-white/40 hover:bg-white/60 border-2 border-transparent'}">
+          <button onclick="selectPlatform('${p.id}')" class="flex flex-col items-center gap-2 px-4 py-4 rounded-[12px] transition-all duration-200 ${state.selectedPlatform.id === p.id ? 'bg-white border-2 border-[#007AFF]' : 'bg-white/40 hover:bg-white/60 border-2 border-transparent'}">
             <div class="w-8 h-8 rounded-lg overflow-hidden">
               ${p.icon}
             </div>
@@ -394,11 +287,9 @@
         `).join('');
       }
 
-      // 优化后的 renderQuickJump 函数: 调整了 padding、图标大小和文字大小，并添加了 truncate
       function renderQuickJump() {
-        const isMobileView = isMobile();
         els.quickJumpGrid.innerHTML = PLATFORMS.map(p => `
-          <button onclick="selectPlatformFromQuickJump('${p.id}')" class="card-hover-effect group relative rounded-[16px] px-3 py-4 sm:px-5 sm:py-5 text-left w-full h-full mobile-card">
+          <button onclick="selectPlatformFromQuickJump('${p.id}')" class="card-hover-effect group relative rounded-[16px] px-3 py-4 sm:px-5 sm:py-5 text-left w-full h-full">
             <div class="relative z-10 flex items-center sm:gap-4 gap-3">
               <div class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-110 rounded-lg overflow-hidden">
                 ${p.icon}
@@ -416,17 +307,13 @@
           return;
         }
         els.historyList.innerHTML = state.searchHistory.map((item, index) => `
-          <button onclick="useHistoryItem(${index})" class="touch-target w-full flex items-center gap-3 px-3 py-2 rounded-[8px] hover:bg-white/60 transition-all text-left group">
+          <button onclick="useHistoryItem(${index})" class="w-full flex items-center gap-3 px-3 py-2 rounded-[8px] hover:bg-white/60 transition-all text-left group">
             <i data-lucide="clock" class="w-3.5 h-3.5 text-[#86868B]"></i>
-            <span class="text-[#1D1D1F] flex-1 text-[14px] truncate">${item.query}</span>
-            <span class="text-[#86868B] text-[12px] bg-black/5 px-2 py-0.5 rounded flex-shrink-0">${item.platformName}</span>
+            <span class="text-[#1D1D1F] flex-1 text-[14px]">${item.query}</span>
+            <span class="text-[#86868B] text-[12px] bg-black/5 px-2 py-0.5 rounded">${item.platformName}</span>
           </button>
         `).join('');
-        setTimeout(() => {
-          if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
-          }
-        }, 10);
+        lucide.createIcons();
       }
 
       function togglePanel(panelEl, show) {
@@ -517,25 +404,7 @@
         setTimeout(() => t.classList.add('opacity-0'), duration);
       }
 
-      // 防抖函数，优化性能
-      function debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-          const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-          };
-          clearTimeout(timeout);
-          timeout = setTimeout(later, wait);
-        };
-      }
-
-      // 页面加载完成后初始化
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-      } else {
-        init();
-      }
+      init();
     </script>
   </body>
 </html>
