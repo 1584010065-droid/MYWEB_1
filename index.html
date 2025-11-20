@@ -78,6 +78,126 @@
       .glass-button:active {
         transform: scale(0.985);
       }
+      .platform-selector {
+        position: relative;
+      }
+      #platformSelector {
+        transition: all 0.2s ease;
+      }
+      #platformSelector:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+      .platform-dropdown {
+        position: absolute;
+        top: calc(100% + 8px);
+        left: 0;
+        right: 0;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        max-height: 300px;
+        overflow-y: auto;
+        z-index: 100;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-10px);
+        transition: all 0.2s ease;
+      }
+      .platform-dropdown.show {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+      }
+      .platform-option {
+        padding: 12px 16px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: background 0.2s;
+      }
+      .platform-option:hover {
+        background: #f5f5f7;
+      }
+      .platform-option.selected {
+        background: #f0f9ff;
+        color: #007aff;
+      }
+      .history-panel {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        z-index: 200;
+        display: flex;
+        align-items: flex-end;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+      .history-panel.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .history-content {
+        background: white;
+        border-radius: 24px 24px 0 0;
+        width: 100%;
+        max-height: 70vh;
+        padding: 24px;
+        transform: translateY(100%);
+        transition: transform 0.3s ease;
+      }
+      .history-panel.show .history-content {
+        transform: translateY(0);
+      }
+      .history-item {
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.2s;
+        border-left: 4px solid transparent;
+      }
+      .history-item:hover {
+        background: #f5f5f7;
+        transform: translateX(4px);
+      }
+      .app-icon {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        flex-shrink: 0;
+      }
+      .app-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+      .platform-icon {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .platform-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
     </style>
   </head>
   <body class="flex items-center justify-center px-4 py-12">
@@ -100,15 +220,46 @@
           <input
             id="keyword"
             type="text"
-            placeholder="支持中文，回车默认搜索知乎"
-            class="w-full rounded-[12px] border-2 border-[#E5E5EA] bg-white px-5 py-4 text-base text-[#1D1D1F] placeholder-[#86868B] transition shadow-sm focus:border-[#007AFF] focus:shadow-[0_0_0_4px_rgba(0,122,255,0.12)] focus:outline-none"
+            placeholder="请输入搜索的主题/关键词"
+            class="w-full rounded-[12px] border-2 border-[#E5E5EA] bg-white px-5 py-5 text-lg text-[#1D1D1F] placeholder-[#86868B] transition shadow-sm focus:border-[#007AFF] focus:shadow-[0_0_0_4px_rgba(0,122,255,0.12)] focus:outline-none"
           />
           <button
             id="clearInput"
-            class="absolute right-4 top-1/2 -translate-y-1/2 text-[#86868B] hover:text-[#007AFF] transition"
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-[#86868B] hover:text-[#007AFF] transition text-xl"
             aria-label="清除输入"
           >
             ✕
+          </button>
+        </div>
+        <div class="flex items-center gap-3 mt-2">
+          <div class="platform-selector flex-1">
+            <button
+              id="platformSelector"
+              class="w-full rounded-lg px-4 py-3 flex items-center gap-2 text-white font-medium transition"
+              style="background-color: #0084FF;"
+            >
+              <span id="selectedPlatformIcon" class="platform-icon">
+                <img id="selectedPlatformIconImg" src="" alt="" />
+              </span>
+              <span id="selectedPlatformLabel" class="flex-1 text-left">知乎</span>
+              <span class="text-xs">▼</span>
+            </button>
+            <div id="platformDropdown" class="platform-dropdown">
+              <!-- 平台选项将通过JS动态生成 -->
+            </div>
+          </div>
+          <button
+            id="historyBtn"
+            class="px-4 py-3 bg-gray-100 rounded-lg text-sm text-[#1D1D1F] hover:bg-gray-200 transition"
+          >
+            历史记录
+          </button>
+          <button
+            id="searchBtn"
+            class="px-6 py-3 bg-gray-800 rounded-lg text-white font-medium hover:bg-gray-700 transition flex items-center gap-2"
+          >
+            搜索
+            <span>→</span>
           </button>
         </div>
       </section>
@@ -134,6 +285,34 @@
       aria-live="polite"
     ></div>
 
+    <div id="historyPanel" class="history-panel">
+      <div class="history-content">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-[#1D1D1F]">搜索历史</h3>
+          <div class="flex gap-2">
+            <button
+              id="clearHistory"
+              class="text-sm text-[#86868B] hover:text-[#007AFF] transition"
+            >
+              清空
+            </button>
+            <button
+              id="closeHistory"
+              class="text-xl text-[#86868B] hover:text-[#1D1D1F] transition"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+        <div id="historyList" class="space-y-2">
+          <!-- 历史记录项将通过JS动态生成 -->
+        </div>
+        <div id="emptyHistory" class="text-center text-[#86868B] py-8 text-sm hidden">
+          暂无搜索历史
+        </div>
+      </div>
+    </div>
+
     <script>
       const DEFAULT_PLATFORM = "zhihu";
       const isMobileDevice = /Android|iPhone|iPad|iPod|Mobile/i.test(
@@ -143,12 +322,16 @@
         {
           id: "zhihu",
           label: "知乎",
+          icon: "知乎 App - App Store.webp",
+          brandColor: "#0084FF",
           url: (encoded) => `https://www.zhihu.com/search?type=content&q=${encoded}`,
           className: "",
         },
         {
           id: "xiaohongshu",
           label: "小红书",
+          icon: "小红书 - App Store.webp",
+          brandColor: "#FF2442",
           url: (encoded) =>
             `https://www.xiaohongshu.com/search_result?keyword=${encoded}&source=web_search`,
           mobileUrl: (encoded) =>
@@ -160,34 +343,171 @@
         {
           id: "weibo",
           label: "微博",
+          icon: "微博 - App Store.webp",
+          brandColor: "#E6162D",
           url: (encoded) => `https://s.weibo.com/weibo?q=${encoded}`,
           className: "",
         },
         {
           id: "bilibili",
           label: "哔哩哔哩",
+          icon: "哔哩哔哩-弹幕番剧直播高清视频 App - App Store.webp",
+          brandColor: "#FB7299",
           url: (encoded) => `https://search.bilibili.com/all?keyword=${encoded}`,
           className: "",
         },
         {
           id: "taobao",
           label: "淘宝",
+          icon: "淘宝.webp",
+          brandColor: "#FF6A00",
           url: (encoded) => `https://s.taobao.com/search?q=${encoded}`,
           className: "",
         },
         {
           id: "pinduoduo",
           label: "拼多多",
+          icon: "拼多多.webp",
+          brandColor: "#E02E24",
           url: (encoded) =>
             `https://mobile.yangkeduo.com/search_result.html?search_key=${encoded}`,
           className: "",
         },
       ];
 
+      // 当前选中的平台
+      let currentPlatform = DEFAULT_PLATFORM;
+
       const keywordInput = document.getElementById("keyword");
       const clearBtn = document.getElementById("clearInput");
       const toast = document.getElementById("toast");
       const platformGrid = document.getElementById("platformGrid");
+      const platformSelector = document.getElementById("platformSelector");
+      const platformDropdown = document.getElementById("platformDropdown");
+      const selectedPlatformIcon = document.getElementById("selectedPlatformIcon");
+      const selectedPlatformLabel = document.getElementById("selectedPlatformLabel");
+      const historyBtn = document.getElementById("historyBtn");
+      const historyPanel = document.getElementById("historyPanel");
+      const historyList = document.getElementById("historyList");
+      const emptyHistory = document.getElementById("emptyHistory");
+      const clearHistory = document.getElementById("clearHistory");
+      const closeHistory = document.getElementById("closeHistory");
+      const searchBtn = document.getElementById("searchBtn");
+
+      // 历史记录管理
+      function getHistory() {
+        try {
+          const history = localStorage.getItem("searchHistory");
+          return history ? JSON.parse(history) : [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function saveHistory(query, platformId) {
+        try {
+          const history = getHistory();
+          const newItem = {
+            query,
+            platformId,
+            timestamp: Date.now(),
+          };
+          // 移除重复项
+          const filtered = history.filter(
+            (item) => !(item.query === query && item.platformId === platformId)
+          );
+          // 添加到开头
+          filtered.unshift(newItem);
+          // 最多保存50条
+          const limited = filtered.slice(0, 50);
+          localStorage.setItem("searchHistory", JSON.stringify(limited));
+        } catch (e) {
+          console.warn("Failed to save history", e);
+        }
+      }
+
+      function renderHistory() {
+        const history = getHistory();
+        historyList.innerHTML = "";
+        
+        if (history.length === 0) {
+          emptyHistory.classList.remove("hidden");
+          return;
+        }
+        
+        emptyHistory.classList.add("hidden");
+        history.forEach((item) => {
+          const platform = platforms.find((p) => p.id === item.platformId) || platforms[0];
+          const div = document.createElement("div");
+          div.className = "history-item";
+          div.style.borderLeftColor = platform.brandColor;
+          div.innerHTML = `
+            <div class="flex items-center gap-2 flex-1">
+              <span class="app-icon">
+                <img src="${platform.icon}" alt="${platform.label}" />
+              </span>
+              <span class="text-sm text-[#1D1D1F]">${item.query}</span>
+              <span class="text-xs text-[#86868B]">- ${platform.label}</span>
+            </div>
+            <button class="text-xs text-[#86868B] hover:text-red-500 transition" data-action="delete">删除</button>
+          `;
+          
+          // 删除按钮
+          const deleteBtn = div.querySelector('[data-action="delete"]');
+          deleteBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            deleteHistoryItem(item);
+          });
+          
+          // 点击历史项（除了删除按钮）
+          div.addEventListener("click", (e) => {
+            if (e.target.dataset.action === "delete") {
+              return;
+            }
+            keywordInput.value = item.query;
+            currentPlatform = item.platformId;
+            updatePlatformSelector();
+            openSearch(item.platformId);
+            closeHistoryPanel();
+          });
+          
+          historyList.appendChild(div);
+        });
+      }
+
+      function deleteHistoryItem(item) {
+        try {
+          const history = getHistory();
+          const filtered = history.filter(
+            (h) => !(h.query === item.query && h.platformId === item.platformId && h.timestamp === item.timestamp)
+          );
+          localStorage.setItem("searchHistory", JSON.stringify(filtered));
+          renderHistory();
+        } catch (e) {
+          console.warn("Failed to delete history item", e);
+        }
+      }
+
+      function clearAllHistory() {
+        if (confirm("确定要清空所有搜索历史吗？")) {
+          try {
+            localStorage.removeItem("searchHistory");
+            renderHistory();
+            showToast("历史记录已清空");
+          } catch (e) {
+            console.warn("Failed to clear history", e);
+          }
+        }
+      }
+
+      function openHistoryPanel() {
+        renderHistory();
+        historyPanel.classList.add("show");
+      }
+
+      function closeHistoryPanel() {
+        historyPanel.classList.remove("show");
+      }
 
       function showToast(message) {
         toast.textContent = message;
@@ -241,6 +561,48 @@
         }
       }
 
+      function updatePlatformSelector() {
+        const platform = platforms.find((p) => p.id === currentPlatform) || platforms[0];
+        const iconImg = document.getElementById("selectedPlatformIconImg");
+        if (iconImg) {
+          iconImg.src = platform.icon;
+          iconImg.alt = platform.label;
+        }
+        selectedPlatformLabel.textContent = platform.label;
+        // 更新按钮背景色为品牌色
+        platformSelector.style.backgroundColor = platform.brandColor;
+        platformSelector.style.borderColor = platform.brandColor;
+      }
+
+      function renderPlatformDropdown() {
+        platformDropdown.innerHTML = "";
+        platforms.forEach((platform) => {
+          const option = document.createElement("div");
+          option.className = `platform-option ${platform.id === currentPlatform ? "selected" : ""}`;
+          if (platform.id === currentPlatform) {
+            option.style.backgroundColor = `${platform.brandColor}15`;
+            option.style.color = platform.brandColor;
+          }
+          option.innerHTML = `
+            <span class="app-icon">
+              <img src="${platform.icon}" alt="${platform.label}" />
+            </span>
+            <span class="flex-1">${platform.label}</span>
+          `;
+          option.addEventListener("click", () => {
+            currentPlatform = platform.id;
+            updatePlatformSelector();
+            platformDropdown.classList.remove("show");
+            renderPlatformDropdown(); // 重新渲染以更新选中状态
+          });
+          platformDropdown.appendChild(option);
+        });
+      }
+
+      function togglePlatformDropdown() {
+        platformDropdown.classList.toggle("show");
+      }
+
       function openSearch(platformId) {
         const query = getQuery();
         if (!query) {
@@ -258,6 +620,9 @@
             : null;
         const targetUrl = mobileUrl || fallbackUrl;
 
+        // 保存历史记录
+        saveHistory(query, platformId);
+
         closeKeyboard();
 
         if (isMobileDevice && typeof platform.deepLink === "function") {
@@ -274,22 +639,28 @@
           button.type = "button";
           button.dataset.platform = platform.id;
           button.className = [
-            "glass-button group w-full min-h-[90px] rounded-[16px] text-[17px] font-semibold tracking-[0.02em] flex items-center justify-center text-[#1D1D1F] hover:text-[#007AFF] transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#007AFF]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
+            "glass-button group w-full min-h-[90px] rounded-[16px] text-[17px] font-semibold tracking-[0.02em] flex items-center justify-center gap-3 text-[#1D1D1F] hover:text-[#007AFF] transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#007AFF]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
             platform.className,
           ]
             .filter(Boolean)
             .join(" ");
-          button.textContent = platform.label;
+          button.innerHTML = `
+            <span class="platform-icon">
+              <img src="${platform.icon}" alt="${platform.label}" />
+            </span>
+            <span>${platform.label}</span>
+          `;
           button.addEventListener("click", () => openSearch(platform.id));
           fragment.appendChild(button);
         });
         platformGrid.appendChild(fragment);
       }
 
+      // 事件监听器
       keywordInput.addEventListener("keydown", (event) => {
         if (event.key === "Enter") {
           event.preventDefault();
-          openSearch(DEFAULT_PLATFORM);
+          openSearch(currentPlatform);
         }
       });
 
@@ -300,6 +671,44 @@
         }
       });
 
+      platformSelector.addEventListener("click", (e) => {
+        e.stopPropagation();
+        togglePlatformDropdown();
+      });
+
+      // 点击外部关闭下拉菜单
+      document.addEventListener("click", (e) => {
+        if (!platformSelector.contains(e.target) && !platformDropdown.contains(e.target)) {
+          platformDropdown.classList.remove("show");
+        }
+      });
+
+      searchBtn.addEventListener("click", () => {
+        openSearch(currentPlatform);
+      });
+
+      historyBtn.addEventListener("click", () => {
+        openHistoryPanel();
+      });
+
+      closeHistory.addEventListener("click", () => {
+        closeHistoryPanel();
+      });
+
+      clearHistory.addEventListener("click", () => {
+        clearAllHistory();
+      });
+
+      // 点击历史面板背景关闭
+      historyPanel.addEventListener("click", (e) => {
+        if (e.target === historyPanel) {
+          closeHistoryPanel();
+        }
+      });
+
+      // 初始化
+      updatePlatformSelector();
+      renderPlatformDropdown();
       renderButtons();
     </script>
   </body>
