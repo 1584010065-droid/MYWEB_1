@@ -77,7 +77,7 @@
         opacity: 1;
       }
 
-      /* 代码优化点：将文本样式集中定义，实现 MD 文件中的 letter-spacing */
+      /* 代码优化点：将文本样式集中定义，实现 MD 文件中的 letter-spacing !!! */
       .card-hover-effect .platform-name {
         /* font-size: 17px; 移到 JS 模板的 inline class 中，使用 sm:text-[17px] */
         font-weight: 600;
@@ -119,26 +119,26 @@
           
           <div id="searchBox" class="relative bg-white rounded-[16px] border-2 border-[#E5E5EA] transition-all duration-200 focus-within:border-[#007AFF] focus-within:shadow-[0_0_0_4px_rgba(0,122,255,0.1)]">
             
-            <div class="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3">
+            <div class="flex items-center gap-3 sm:gap-3 px-4 sm:px-4 py-3 sm:py-3">
               
-              <button id="platformTrigger" class="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-2 bg-[#f5f5f7] rounded-[10px] hover:bg-[#e5e5ea] transition-all duration-200 flex-shrink-0 group">
-                <div id="currentPlatformIcon" class="w-5 h-5 flex items-center justify-center"></div>
+              <button id="platformTrigger" class="flex items-center gap-2 sm:gap-2 px-3 sm:px-3 py-2 sm:py-2 bg-[#f5f5f7] rounded-[10px] hover:bg-[#e5e5ea] transition-all duration-200 flex-shrink-0 group">
+                <div id="currentPlatformIcon" class="w-6 h-6 sm:w-5 sm:h-5 flex items-center justify-center"></div>
                 <span id="currentPlatformName" class="text-[#1D1D1F] text-[14px] font-medium hidden sm:inline">知乎</span>
                 <i data-lucide="chevron-down" class="w-4 h-4 text-[#86868B]"></i>
               </button>
 
               <input id="searchInput" type="text" placeholder="" class="flex-1 bg-transparent text-[#1D1D1F] placeholder-[#86868B] outline-none text-[15px] min-w-[50px]" autocomplete="off" />
 
-              <button id="historyTrigger" class="px-2 sm:px-3 py-1 sm:py-2 text-[#86868B] hover:text-[#007AFF] hover:bg-[#007AFF]/10 rounded-[10px] transition-all duration-200 flex-shrink-0">
+              <button id="historyTrigger" class="px-3 sm:px-3 py-2 sm:py-2 text-[#86868B] hover:text-[#007AFF] hover:bg-[#007AFF]/10 rounded-[10px] transition-all duration-200 flex-shrink-0">
                 <div class="flex items-center gap-2">
-                  <i data-lucide="clock" class="w-4 h-4"></i>
+                  <i data-lucide="clock" class="w-5 h-5 sm:w-4 sm:h-4"></i>
                   <span class="text-[14px] hidden sm:inline">历史</span>
                 </div>
               </button>
 
-              <button id="searchBtn" class="px-3 sm:px-5 py-1 sm:py-2 bg-[#86868B] text-white rounded-[10px] transition-all duration-200 flex-shrink-0 active:scale-95 flex items-center gap-2 hover:bg-[#007AFF]">
+              <button id="searchBtn" class="px-4 sm:px-5 py-2 sm:py-2 bg-[#86868B] text-white rounded-[10px] transition-all duration-200 flex-shrink-0 active:scale-95 flex items-center gap-2 hover:bg-[#007AFF]">
                 <span class="text-[14px] font-medium hidden sm:inline">搜索</span>
-                <i data-lucide="search" class="w-4 h-4"></i>
+                <i data-lucide="search" class="w-5 h-5 sm:w-4 sm:h-4"></i>
               </button>
             </div>
 
@@ -250,7 +250,7 @@
           state.searchQuery = e.target.value;
           const hasQuery = state.searchQuery.trim().length > 0;
           // 确保按钮样式在移动端正确
-          const btnClassBase = `px-3 sm:px-5 py-1 sm:py-2 rounded-[10px] transition-all duration-200 flex-shrink-0 active:scale-95 flex items-center gap-2`;
+          const btnClassBase = `px-4 sm:px-5 py-2 sm:py-2 rounded-[10px] transition-all duration-200 flex-shrink-0 active:scale-95 flex items-center gap-2`;
           const btnClassColor = hasQuery ? 'bg-[#007AFF] text-white hover:bg-[#0051D5]' : 'bg-[#86868B] text-white hover:bg-[#007AFF]';
           els.searchBtn.className = `${btnClassBase} ${btnClassColor}`;
         };
