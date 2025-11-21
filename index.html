@@ -100,10 +100,16 @@
           <h1 class="text-[#1D1D1F] text-[36px] font-semibold tracking-[2px]">
             FOCUS MODE
           </h1>
+          
           <p class="text-[#86868B] text-[15px]">
-            直达搜索结果，不受信息流干扰，保持专注。
+            <span class="hidden sm:inline">直达搜索结果，不受信息流干扰，保持专注。</span>
+            
+            <span class="sm:hidden flex flex-col items-center gap-1">
+                <span>直达搜索结果，不受信息流干扰</span>
+                <span>保持专注</span>
+            </span>
           </p>
-        </div>
+          </div>
 
         <div class="mb-6 relative z-50">
           <label class="block text-[#1D1D1F] mb-3 text-[14px] font-medium">搜索关键词</label>
@@ -379,7 +385,7 @@
         showToast("历史记录已清空");
       };
 
-      // --- 核心修改：全平台 App 唤起逻辑 ---
+      // --- App 唤起逻辑 ---
       function handleSearch() {
         const query = state.searchQuery.trim();
         if (!query) { showToast("请输入搜索内容"); els.searchInput.focus(); return; }
@@ -391,7 +397,6 @@
         
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         
-        // 如果是手机端，尝试使用 App 协议跳转
         if (isMobile) {
            let scheme = '';
            const encodedQuery = encodeURIComponent(query);
@@ -410,29 +415,23 @@
                    scheme = `bilibili://search?keyword=${encodedQuery}`;
                    break;
                case 'taobao':
-                   // 淘宝协议较多，尝试通用协议
                    scheme = `taobao://search.taobao.com/search?q=${encodedQuery}`;
                    break;
                case 'pinduoduo':
-                   // 拼多多协议较为复杂，通常也是 URL Scheme
                    scheme = `pinduoduo://com.xunmeng.pinduoduo/search_result.html?search_key=${encodedQuery}`;
                    break;
            }
 
            if (scheme) {
                window.location.href = scheme;
-               // 设置一个延时，如果唤起失败（如未安装App），则跳转网页版
-               // 注意：部分现代浏览器可能会阻止此行为
                setTimeout(() => {
                     window.open(state.selectedPlatform.url + encodedQuery, '_blank');
                }, 2000);
-               
                closeAllPanels();
                return;
            }
         }
         
-        // 默认网页跳转
         window.open(state.selectedPlatform.url + encodeURIComponent(query), '_blank');
         closeAllPanels();
       }
