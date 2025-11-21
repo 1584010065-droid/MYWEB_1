@@ -147,7 +147,7 @@
           </div>
         </div>
         
-        <div class="mb-6 mt-2 text-center">
+        <div class="my-3 text-center">
             <button id="addFavoriteTip" class="text-[#007AFF] text-xs font-medium hover:opacity-80 transition flex-shrink-0" aria-label="收藏本页到浏览器">
                 打开浏览器设置，点击收藏/添加到桌面
             </button>
@@ -182,7 +182,6 @@
         pinduoduo:   `<img src="icons/pinduoduo.png" class="w-full h-full object-contain">`
       };
 
-      // 平台配置：Web URL 保持不变，App 协议在 handleSearch 中处理
       const PLATFORMS = [
         { id: "zhihu", name: "知乎", icon: ICONS.zhihu, url: "https://www.zhihu.com/search?type=content&q=" },
         { id: "xiaohongshu", name: "小红书", icon: ICONS.xiaohongshu, url: "https://www.xiaohongshu.com/search_result?keyword=" },
@@ -380,28 +379,61 @@
         showToast("历史记录已清空");
       };
 
-      // 核心修改：处理搜索跳转
+      // --- 核心修改：全平台 App 唤起逻辑 ---
       function handleSearch() {
         const query = state.searchQuery.trim();
         if (!query) { showToast("请输入搜索内容"); els.searchInput.focus(); return; }
         
-        // 保存历史
         const newHistory = [{ query, platformName: state.selectedPlatform.name }, ...state.searchHistory.filter(h => h.query !== query)].slice(0, 10);
         state.searchHistory = newHistory;
         localStorage.setItem('focusMode_history', JSON.stringify(newHistory));
         renderHistoryList();
         
-        // 移动端 + 小红书 跳转逻辑
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        if (isMobile && state.selectedPlatform.id === 'xiaohongshu') {
-             // 使用小红书协议头直接唤起 App
-             // 注意：需要用户已安装 App
-             window.location.href = `xhsdiscover://search/result?keyword=${encodeURIComponent(query)}`;
-        } else {
-             // 其他情况或 PC 端使用网页跳转
-             window.open(state.selectedPlatform.url + encodeURIComponent(query), '_blank');
+        
+        // 如果是手机端，尝试使用 App 协议跳转
+        if (isMobile) {
+           let scheme = '';
+           const encodedQuery = encodeURIComponent(query);
+           
+           switch(state.selectedPlatform.id) {
+               case 'zhihu':
+                   scheme = `zhihu://search?q=${encodedQuery}`;
+                   break;
+               case 'xiaohongshu':
+                   scheme = `xhsdiscover://search/result?keyword=${encodedQuery}`;
+                   break;
+               case 'weibo':
+                   scheme = `sinaweibo://searchall?q=${encodedQuery}`;
+                   break;
+               case 'bilibili':
+                   scheme = `bilibili://search?keyword=${encodedQuery}`;
+                   break;
+               case 'taobao':
+                   // 淘宝协议较多，尝试通用协议
+                   scheme = `taobao://search.taobao.com/search?q=${encodedQuery}`;
+                   break;
+               case 'pinduoduo':
+                   // 拼多多协议较为复杂，通常也是 URL Scheme
+                   scheme = `pinduoduo://com.xunmeng.pinduoduo/search_result.html?search_key=${encodedQuery}`;
+                   break;
+           }
+
+           if (scheme) {
+               window.location.href = scheme;
+               // 设置一个延时，如果唤起失败（如未安装App），则跳转网页版
+               // 注意：部分现代浏览器可能会阻止此行为
+               setTimeout(() => {
+                    window.open(state.selectedPlatform.url + encodedQuery, '_blank');
+               }, 2000);
+               
+               closeAllPanels();
+               return;
+           }
         }
         
+        // 默认网页跳转
+        window.open(state.selectedPlatform.url + encodeURIComponent(query), '_blank');
         closeAllPanels();
       }
 
